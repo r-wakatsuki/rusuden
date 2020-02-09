@@ -1,0 +1,31 @@
+Parameters:
+  appName:
+    Type: String
+
+  targetBucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: rusuden-targetBucketName
+
+  recipientAddress:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: rusuden-recipientAddress
+
+  defaultSesRuleSet:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: defaultSesRuleSet
+
+Resources:
+  ReceiptRule00:
+    Type: AWS::SES::ReceiptRule
+    Properties:
+      RuleSetName: !Ref defaultSesRuleSet
+      Rule:
+        Name: !Sub ${appName}-aws-receiptRule-00
+        Enabled: True
+        ScanEnabled: True
+        Recipients: 
+          - !Ref recipientAddress
+        Actions: 
+          - S3Action:
+              BucketName: !Ref targetBucketName
+              ObjectKeyPrefix: mailraw/
